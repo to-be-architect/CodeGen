@@ -14,8 +14,8 @@ import json
 from aixcoder.aixcode import AIXCode
 
 # 多语言生成 Code
-AIXCode1 = AIXCode('codegen-350M-multi')
-AIXCode2 = AIXCode('codegen-2B-multi')
+AIXCode1 = AIXCode('codegen-350M-multi', 64)
+AIXCode2 = AIXCode('codegen-2B-multi', 256)
 
 def get_body_json(body):
     body_decode = body.decode()
@@ -89,6 +89,7 @@ class AIX1Handler(tornado.web.RequestHandler):
         y = yield self.aixcode(x)
         print(y)
         self.write(y)
+
 
 class AIX2Handler(tornado.web.RequestHandler):
     # 跨域配置：https://github.com/tornadoweb/tornado/issues/2104

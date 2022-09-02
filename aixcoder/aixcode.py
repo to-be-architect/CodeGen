@@ -89,22 +89,17 @@ def create_custom_gpt2_tokenizer():
 
 
 #######################################################################
-# sample params
-MAX_LENGTH_SAMPLE = 256
-TOP_P = 0.95
-TEMPERATURE = 1
-NUM_RETURN_SEQUENCES = 5
-
+# sample
 
 def sample(
         model,
         tokenizer,
         context,
         pad_token_id,
-        num_return_sequences=NUM_RETURN_SEQUENCES,
-        temperature=TEMPERATURE,
-        top_p=TOP_P,
-        max_length_sample=MAX_LENGTH_SAMPLE,
+        num_return_sequences=1,
+        temperature=1,
+        top_p=0.95,
+        max_length_sample=128,
         max_length=2048
 ):
     input_ids = tokenizer(
@@ -171,10 +166,18 @@ def truncate(completion):
         return completion
 
 
+# Model Params:
+
+NUM_RETURN_SEQUENCES = 5
+TEMPERATURE = 1
+TOP_P = 0.95
+
+
 class AIXCode:
-    def __init__(self, model_name):
+    def __init__(self, model_name, max_length):
 
         self.model_name = model_name
+        self.max_length = max_length
 
         # (0) constants
 
@@ -225,7 +228,7 @@ class AIXCode:
                             num_return_sequences=NUM_RETURN_SEQUENCES,
                             temperature=TEMPERATURE,
                             top_p=TOP_P,
-                            max_length_sample=MAX_LENGTH_SAMPLE)
+                            max_length_sample=self.max_length)
 
             completion1 = result[0]
             completion2 = result[1]
@@ -240,8 +243,6 @@ class AIXCode:
             truncation5 = truncate(completion5)
 
             comment_sig = '//'
-            if self.model_name == 'codegen-350M-mono':
-                comment_sig = '#'
 
             return f'{comment_sig} aiXCoder Output 1:\n{context_string} {truncation1} \n\n' \
                    f'{comment_sig} aiXCoder Output 2:\n{context_string} {truncation2} \n\n' \

@@ -44,6 +44,8 @@ This
 [Google Colab notebook](https://colab.research.google.com/drive/1fQI8OgzMAR0bquCrvhlAtXSw6iMFbVgI) allows for sampling
 from the CodeGen models.
 
+https://colab.research.google.com/drive/1fQI8OgzMAR0bquCrvhlAtXSw6iMFbVgI#scrollTo=YN2xY4xmkss0
+
 ## Setup
 
 ```sh

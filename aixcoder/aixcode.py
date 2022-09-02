@@ -197,7 +197,7 @@ class AIXCode:
         set_env()
         set_seed(42, deterministic=True)
 
-        ckpt = f'./checkpoints/{model_name}'
+        ckpt = f'/Users/bytedance/aicode/aixcoder_server/checkpoints/{model_name}'
 
         # load
         with print_time(f'{model_name} loading parameters'):

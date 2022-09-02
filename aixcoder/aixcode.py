@@ -90,7 +90,7 @@ def create_custom_gpt2_tokenizer():
 
 #######################################################################
 # sample params
-MAX_LENGTH_SAMPLE = 100
+MAX_LENGTH_SAMPLE = 256
 TOP_P = 0.95
 TEMPERATURE = 1
 NUM_RETURN_SEQUENCES = 5

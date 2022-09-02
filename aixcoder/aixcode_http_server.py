@@ -13,7 +13,9 @@ import json
 
 from aixcoder.aixcode import AIXCode
 
-AIXCode1 = AIXCode('codegen-350M-multi')
+# 多语言生成 Code
+AIXCode1 = AIXCode('codegen-2B-multi')
+# 基于multi 进一步训练出的自然语言生成 Python Code
 AIXCode2 = AIXCode('codegen-350M-mono')
 
 

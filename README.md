@@ -67,7 +67,9 @@ wget -P checkpoints https://storage.googleapis.com/sfr-codegen-research/checkpoi
 
 # codegen-2B-nl,multi,mono
 # wget -P checkpoints https://storage.googleapis.com/sfr-codegen-research/checkpoints/codegen-2B-nl.tar.gz && tar -xvf checkpoints/codegen-2B-nl.tar.gz -C checkpoints/
+
 wget -P checkpoints https://storage.googleapis.com/sfr-codegen-research/checkpoints/codegen-2B-multi.tar.gz && tar -xvf checkpoints/codegen-2B-multi.tar.gz -C checkpoints/
+
 wget -P checkpoints https://storage.googleapis.com/sfr-codegen-research/checkpoints/codegen-2B-mono.tar.gz && tar -xvf checkpoints/codegen-2B-mono.tar.gz -C checkpoints/
 # codegen-6B-nl,multi,mono
 # wget -P checkpoints https://storage.googleapis.com/sfr-codegen-research/checkpoints/codegen-6B-nl.tar.gz && tar -xvf checkpoints/codegen-6B-nl.tar.gz -C checkpoints/

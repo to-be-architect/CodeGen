@@ -140,7 +140,7 @@ if __name__ == "__main__":
     ])
 
     # 监听端口
-    port = 8888
+    port = 9888
     app.listen(port)
     print(f'AIXCoder Started, Listening on Port:{port}')
     # 启动应用程序

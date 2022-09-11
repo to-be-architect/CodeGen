@@ -210,13 +210,9 @@ class AIXCode:
         ckpt = f'/home/me/ai/aixcoder/CodeGen/checkpoints/{model_name}'
 
         # (3) load
-
         with print_time('loading parameters'):
             model = create_model(ckpt=ckpt, fp16=use_fp16).to(device)
-
-        # load
-        with print_time(f'{model_name} loading parameters'):
-            model = create_model(ckpt=ckpt, fp16=False).to()
+            print(model)
 
         with print_time(f'{model_name} loading tokenizer'):
             if model_name in models_pl:
@@ -227,6 +223,8 @@ class AIXCode:
             tokenizer.padding_side = 'left'
             tokenizer.pad_token = 50256
 
+            print(tokenizer)
+
         self.device = device
         self.model = model
         self.tokenizer = tokenizer
@@ -234,7 +232,7 @@ class AIXCode:
     def aixcode(self, context_string):
         # sample
         with print_time(f'{context_string} ... aiXCoding >>>'):
-            result = sample(device= self.device,
+            result = sample(device=self.device,
                             model=self.model,
                             tokenizer=self.tokenizer,
                             context=context_string,

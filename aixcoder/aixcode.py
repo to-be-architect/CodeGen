@@ -49,8 +49,8 @@ def set_seed(seed, deterministic=True):
 
 
 def cast(model, fp16=True):
-    # if fp16:
-    #     model.half()
+    if fp16:
+        model.half()
     return model
 
 
@@ -58,11 +58,12 @@ def cast(model, fp16=True):
 # model
 
 
-def create_model(ckpt, fp16=False):
-    # if fp16:
-    #     return CodeGenForCausalLM.from_pretrained(ckpt, revision='float16', torch_dtype=torch.float16, low_cpu_mem_usage=True)
-    # else:
-    return CodeGenForCausalLM.from_pretrained(ckpt)
+def create_model(ckpt, fp16=True):
+    if fp16:
+        return CodeGenForCausalLM.from_pretrained(ckpt, revision='float16', torch_dtype=torch.float16,
+                                                  low_cpu_mem_usage=True)
+    else:
+        return CodeGenForCausalLM.from_pretrained(ckpt)
 
 
 def create_tokenizer():
@@ -91,17 +92,20 @@ def create_custom_gpt2_tokenizer():
 #######################################################################
 # sample
 
+
 def sample(
-        model,
-        tokenizer,
-        context,
-        pad_token_id,
-        num_return_sequences=1,
-        temperature=1,
-        top_p=0.95,
-        max_length_sample=128,
-        max_length=2048
+    device,
+    model,
+    tokenizer,
+    context,
+    pad_token_id,
+    num_return_sequences=1,
+    temp=0.2,
+    top_p=0.95,
+    max_length_sample=128,
+    max_length=2048
 ):
+
     input_ids = tokenizer(
         context,
         truncation=True,
@@ -114,19 +118,17 @@ def sample(
     assert input_ids_len < max_length
 
     with torch.no_grad():
-        input_ids = input_ids.to()
-
+        input_ids = input_ids.to(device)
         tokens = model.generate(
             input_ids,
             do_sample=True,
             num_return_sequences=num_return_sequences,
-            temperature=temperature,
+            temperature=temp,
             max_length=input_ids_len + max_length_sample,
             top_p=top_p,
             pad_token_id=pad_token_id,
             use_cache=True,
         )
-
         text = tokenizer.batch_decode(tokens[:, input_ids_len:, ...])
 
     return text
@@ -200,7 +202,7 @@ class AIXCode:
         set_env()
         set_seed(42, deterministic=True)
 
-        ckpt = f'/Users/bytedance/aicode/aixcoder_server/checkpoints/{model_name}'
+        ckpt = f'/home/me/ai/aixcoder/CodeGen/checkpoints/{model_name}'
 
         # load
         with print_time(f'{model_name} loading parameters'):
@@ -221,7 +223,8 @@ class AIXCode:
     def aixcode(self, context_string):
         # sample
         with print_time(f'{context_string} ... aiXCoding >>>'):
-            result = sample(model=self.model,
+            result = sample(device="cuda:0",
+                            model=self.model,
                             tokenizer=self.tokenizer,
                             context=context_string,
                             pad_token_id=50256,

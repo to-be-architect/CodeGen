@@ -81,7 +81,7 @@ wget -P checkpoints https://storage.googleapis.com/sfr-codegen-research/checkpoi
 wget -P checkpoints https://storage.googleapis.com/sfr-codegen-research/checkpoints/codegen-16B-mono.tar.gz && tar -xvf checkpoints/codegen-16B-mono.tar.gz -C checkpoints/
 
 # create a virtual environment with requirements
-python3.8 -m venv .venv
+python3 -m venv .venv
 
 source .venv/bin/activate
 
@@ -89,9 +89,9 @@ pip3 install --upgrade pip setuptools
 pip3 install -r requirements.txt
 
 # sample from the model with an arbitrary context
-python3.8 -m aixcoder.hf.sample --model codegen-350M-mono --context "def hello_world():"
+python3 -m aixcoder.hf.sample --model codegen-350M-mono --context "def hello_world():"
 
-python3.8 -m aixcoder.hf.sample --model codegen-350M-mono --context "recursive visit a category tree"
+python3 -m aixcoder.hf.sample --model codegen-350M-mono --context "recursive visit a category tree"
 
 python3.8 -m aixcoder.hf.sample --model codegen-350M-multi --context "func RecursiveVisitCategoryTree"
 python3.8 -m aixcoder.hf.sample --model codegen-350M-multi --context "func KMP"

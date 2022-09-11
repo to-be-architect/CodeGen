@@ -91,8 +91,6 @@ def create_custom_gpt2_tokenizer():
 
 #######################################################################
 # sample
-
-
 def sample(
     device,
     model,
@@ -198,11 +196,23 @@ class AIXCode:
                      'codegen-350M-mono', 'codegen-2B-mono', 'codegen-6B-mono', 'codegen-16B-mono']
         models = models_nl + models_pl
 
+        # (2) preamble
+
         # preamble
         set_env()
         set_seed(42, deterministic=True)
 
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        print("Device in use:", device)
+
+        use_fp16 = True
+
         ckpt = f'/home/me/ai/aixcoder/CodeGen/checkpoints/{model_name}'
+
+        # (3) load
+
+        with print_time('loading parameters'):
+            model = create_model(ckpt=ckpt, fp16=use_fp16).to(device)
 
         # load
         with print_time(f'{model_name} loading parameters'):
@@ -217,19 +227,20 @@ class AIXCode:
             tokenizer.padding_side = 'left'
             tokenizer.pad_token = 50256
 
+        self.device = device
         self.model = model
         self.tokenizer = tokenizer
 
     def aixcode(self, context_string):
         # sample
         with print_time(f'{context_string} ... aiXCoding >>>'):
-            result = sample(device="cuda:0",
+            result = sample(device= self.device,
                             model=self.model,
                             tokenizer=self.tokenizer,
                             context=context_string,
                             pad_token_id=50256,
                             num_return_sequences=NUM_RETURN_SEQUENCES,
-                            temperature=TEMPERATURE,
+                            temp=TEMPERATURE,
                             top_p=TOP_P,
                             max_length_sample=self.max_length)
 

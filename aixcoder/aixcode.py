@@ -35,6 +35,8 @@ class print_time:
 
 def set_env():
     os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+    # export CUDA_VISIBLE_DEVICES = 0, 1
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 
 
 def set_seed(seed, deterministic=True):
@@ -92,18 +94,17 @@ def create_custom_gpt2_tokenizer():
 #######################################################################
 # sample
 def sample(
-    device,
-    model,
-    tokenizer,
-    context,
-    pad_token_id,
-    num_return_sequences=1,
-    temp=0.2,
-    top_p=0.95,
-    max_length_sample=128,
-    max_length=2048
+        device,
+        model,
+        tokenizer,
+        context,
+        pad_token_id,
+        num_return_sequences=1,
+        temp=0.2,
+        top_p=0.95,
+        max_length_sample=128,
+        max_length=2048
 ):
-
     input_ids = tokenizer(
         context,
         truncation=True,
@@ -167,8 +168,7 @@ def truncate(completion):
 
 
 # Model Params:
-
-NUM_RETURN_SEQUENCES = 5
+NUM_RETURN_SEQUENCES = 1
 TEMPERATURE = 1
 TOP_P = 0.95
 
@@ -180,11 +180,8 @@ class AIXCode:
         self.max_length = max_length
 
         # (0) constants
-
         # `model-size` has 4 options: `350M`, `2B`, `6B`, `16B`, which represent the number of parameters in each model.
-        #
         # `data` has 3 options: `nl`, `multi`, `mono`.
-        #
         # * `nl` models are randomly initialized and trained on [The Pile](https://github.com/EleutherAI/the-pile), a 825.18 GB
         #   English text corpus.
         # * `multi` models are initialized from `nl` models and then trained on a corpus with code data consisting of multiple
@@ -197,12 +194,12 @@ class AIXCode:
         models = models_nl + models_pl
 
         # (2) preamble
-
-        # preamble
         set_env()
         set_seed(42, deterministic=True)
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        # cuda:0 表示第 0 块GPU, cuda:1 表示第 1 块GPU
+        # https://blog.csdn.net/weixin_38145317/article/details/104793456
+        device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
         print("Device in use:", device)
 
         use_fp16 = True
@@ -231,7 +228,7 @@ class AIXCode:
 
     def aixcode(self, context_string):
         # sample
-        with print_time(f'{context_string} ... aiXCoding >>>'):
+        with print_time(f'{context_string}'):
             result = sample(device=self.device,
                             model=self.model,
                             tokenizer=self.tokenizer,
@@ -242,22 +239,8 @@ class AIXCode:
                             top_p=TOP_P,
                             max_length_sample=self.max_length)
 
-            completion1 = result[0]
-            completion2 = result[1]
-            completion3 = result[2]
-            completion4 = result[3]
-            completion5 = result[4]
+            generated = truncate(result[0])
 
-            truncation1 = truncate(completion1)
-            truncation2 = truncate(completion2)
-            truncation3 = truncate(completion3)
-            truncation4 = truncate(completion4)
-            truncation5 = truncate(completion5)
+            print(f'{context_string} {generated}')
 
-            comment_sig = '//'
-
-            return f'{comment_sig} aiXCoder Output 1:\n{context_string} {truncation1} \n\n' \
-                   f'{comment_sig} aiXCoder Output 2:\n{context_string} {truncation2} \n\n' \
-                   f'{comment_sig} aiXCoder Output 3:\n{context_string} {truncation3} \n\n' \
-                   f'{comment_sig} aiXCoder Output 4:\n{context_string} {truncation4} \n\n' \
-                   f'{comment_sig} aiXCoder Output 5:\n{context_string} {truncation5} \n\n'
+            return generated

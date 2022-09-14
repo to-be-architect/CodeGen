@@ -14,8 +14,8 @@ import json
 from aixcoder.aixcode import AIXCode
 
 # 多语言生成 Code
-AIXCode1 = AIXCode('codegen-350M-multi', 128)
-AIXCode2 = AIXCode('codegen-2B-multi', 128)
+AIXCode1 = AIXCode('codegen-350M-multi', 64)
+AIXCode2 = AIXCode('codegen-2B-multi', 64)
 
 def get_body_json(body):
     body_decode = body.decode()
